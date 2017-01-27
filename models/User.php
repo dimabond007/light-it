@@ -4,6 +4,8 @@ class User
 {
     public static function register($name,$surname,$phone, $email,$gender,$birthday, $password) {
         
+        $password=password_hash($password,PASSWORD_DEFAULT);
+
         $db = Db::getConnection();
         $sql = 'INSERT INTO users (firstname,lastname,phone, email, gender,birthday, password) '
                 . 'VALUES (:name, :surname, :phone, :email, :gender, :birthday, :password)';
@@ -67,17 +69,18 @@ class User
     public static function checkUserData($email, $password)
     {
         $db = Db::getConnection();
-
-        $sql = 'SELECT * FROM users WHERE email = :email AND password = :password';
-
+        $sql = 'SELECT * FROM users WHERE email = :email';
         $result = $db->prepare($sql);
         $result->bindParam(':email', $email, PDO::PARAM_INT);
-        $result->bindParam(':password', $password, PDO::PARAM_INT);
         $result->execute();
 
         $user = $result->fetch();
         if ($user) {
-            return $user['id'];
+            if(password_verify($password, $user['password']))
+            {
+                return $user['id'];
+            }   
+            
         }
 
         return false;
