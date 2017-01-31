@@ -23,6 +23,9 @@
                         <input type="email" name="email" placeholder="E-mail"  value="<?php echo $email?>" required/>
                         <?php endif; ?>
                         <textarea maxlength="500" placeholder="Ваше сообщение" rows="20" name="msg" id="comment_text" cols="40" class="ui-autocomplete-input" autocomplete="off" role="textbox" aria-autocomplete="list" aria-haspopup="true" required></textarea>
+                        </br></br>
+                        <div class="g-recaptcha" data-sitekey="6LevmRMUAAAAAPXG8SuZYj5wkiRfJf1MsHH4GWjJ"></div>
+                        </br>
                         <input type="submit" name="submit" class="btn btn-default" value="Отправить" />
                     </form>
                 </div>

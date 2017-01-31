@@ -21,59 +21,71 @@ class FeedbackController
 			$name='';
 			$email='';
 		}
-
+        
     	$msg='';
 		if(isset($_POST['submit']))
 		{
-			$name=$_POST['name'];
-			$email=$_POST['email'];
-			$msg=$_POST['msg'];
-            $errors = false;
+			$secret = "6LevmRMUAAAAAHcLOwdIHAT4UQVCASZ4PQTIz-70";
+			$response = null;
+			$reCaptcha = new ReCaptcha($secret);
+	        $errors = false;
+	        
+			if ($_POST["g-recaptcha-response"])
+			{
+				$response = $reCaptcha->verifyResponse($_SERVER["REMOTE_ADDR"],$_POST["g-recaptcha-response"]);
+			}
 
-			if($msg=='')
+
+			if ($response != null && $response->success) 
 			{
-				$errors[]="Поле сообшение не должно быть пустым";
-			}
-			else
-			{
-				if (!User::checkMsg($msg)) 
+				$name=$_POST['name'];
+				$email=$_POST['email'];
+				$msg=$_POST['msg'];
+
+				if($msg=='')
 				{
-                    $errors[] = 'Сообшение не должно быть короче 12-х символов';
-                }
-            }
-			if($name=='')
-			{
-				$errors[]="Поле имя не должно быть пустым";
-			}
-			else
-			{
-				if (!User::checkName($name)) 
-				{
-                    $errors[] = 'Имя не должно быть короче 3-х символов';
-  				}
-  			}
-			if($email=='')
-			{
-				$errors[]="Поле email не должно быть пустым";
-			}
-			else
-			{
-                if (!User::checkEmail($email)) 
-                {
-                    $errors[] = 'Неправильный email';
+					$errors[]="Поле сообшение не должно быть пустым";
 				}
+				else
+				{
+					if (!User::checkMsg($msg)) 
+					{
+	                    $errors[] = 'Сообшение не должно быть короче 12-х символов';
+	                }
+	            }
+				if($name=='')
+				{
+					$errors[]="Поле имя не должно быть пустым";
+				}
+				else
+				{
+					if (!User::checkName($name)) 
+					{
+	                    $errors[] = 'Имя не должно быть короче 3-х символов';
+	  				}
+	  			}
+				if($email=='')
+				{
+					$errors[]="Поле email не должно быть пустым";
+				}
+				else
+				{
+	                if (!User::checkEmail($email)) 
+	                {
+	                    $errors[] = 'Неправильный email';
+					}
+				}
+				if ($errors == false) {
+					date_default_timezone_set('Europe/Kiev');
+					$date=date('Y-m-d H:i:s');
+	                $res=User::setSms($msg,$name,$email,$date);
+	            }
 			}
-			if ($errors == false) {
-				date_default_timezone_set('Europe/Kiev');
-				$date=date('Y-m-d H:i:s');
-                $res=User::setSms($msg,$name,$email,$date);
-            }
-            else
-            {
-            }
-		}
-
-
+			else
+			{
+				$errors[]='Капча не активирована';
+			}
+		} 
         require_once(ROOT . '/views/feedback/feedback.php');
     }
 
