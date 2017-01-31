@@ -108,8 +108,7 @@ class UserController
 
         }
 
-
-        require_once(ROOT . '/views/user/register.php');
+        View::generate( '/views/user/register.php', ['errors'=>$errors, 'result' => $result,'name'=>$name,'surname'=>$surname,'email'=>$email,'password'=>$password,'phone'=>$phone,'birthday'=>$birthday]);
 
         return true;
     }
@@ -118,12 +117,12 @@ class UserController
     {
         $email = '';
         $password = '';
+        $errors = false;
         
         if (isset($_POST['submit'])) {
             $email = $_POST['email'];
             $password = $_POST['password'];
             
-            $errors = false;
                         
             // Валидация полей
             if (!User::checkEmail($email)) {
@@ -144,8 +143,7 @@ class UserController
             }
 
         }
-
-        require_once(ROOT . '/views/user/login.php');
+        View::generate( '/views/user/login.php', ['errors' => $errors,'email'=>$email,'password'=>$password]);
 
         return true;
     }

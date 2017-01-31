@@ -86,14 +86,15 @@ class FeedbackController
 				$errors[]='Капча не активирована';
 			}
 		} 
-        require_once(ROOT . '/views/feedback/feedback.php');
+
+		View::generate( '/views/feedback/feedback.php', ['name' => $name,'email'=>$email]);
     }
 
     public function actionList()
     {
     	User::checkLogged();
     	$listObjSql=User::getAllObjSms();
-        require_once(ROOT . '/views/feedback/list.php');
+    	View::generate( '/views/feedback/list.php', ['listObjSql' => $listObjSql]);
     }
 
 }

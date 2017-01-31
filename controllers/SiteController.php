@@ -21,7 +21,7 @@ class SiteController
             pq($element)->find('.wicon.wind7')->remove();
         }
         
-        require_once(ROOT . '/views/site/index.php');
+        View::generate( '/views/site/index.php', ['hentry' => $hentry]);
 
         return true;
     }
