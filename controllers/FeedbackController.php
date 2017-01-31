@@ -22,13 +22,13 @@ class FeedbackController
 			$email='';
 		}
         
+	    $errors = false;
     	$msg='';
 		if(isset($_POST['submit']))
 		{
 			$secret = "6LevmRMUAAAAAHcLOwdIHAT4UQVCASZ4PQTIz-70";
 			$response = null;
 			$reCaptcha = new ReCaptcha($secret);
-	        $errors = false;
 	        
 			if ($_POST["g-recaptcha-response"])
 			{
@@ -87,7 +87,7 @@ class FeedbackController
 			}
 		} 
 
-		View::generate( '/views/feedback/feedback.php', ['name' => $name,'email'=>$email]);
+		View::generate( '/views/feedback/feedback.php', ['name' => $name,'email'=>$email,'errors'=>$errors]);
     }
 
     public function actionList()

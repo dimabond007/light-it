@@ -6,19 +6,9 @@ class User
         
         $password=password_hash($password,PASSWORD_DEFAULT);
 
-        $db = Db::getConnection();
-        $sql = 'INSERT INTO users (firstname,lastname,phone, email, gender,birthday, password) '
-                . 'VALUES (:name, :surname, :phone, :email, :gender, :birthday, :password)';
-        
-        $result = $db->prepare($sql);
-        $result->bindParam(':name', $name, PDO::PARAM_STR);
-        $result->bindParam(':surname', $surname, PDO::PARAM_STR);
-        $result->bindParam(':phone', $phone, PDO::PARAM_STR);
-        $result->bindParam(':email', $email, PDO::PARAM_STR);
-        $result->bindParam(':gender', $gender, PDO::PARAM_STR);
-        $result->bindParam(':birthday', $birthday, PDO::PARAM_STR);
-        $result->bindParam(':password', $password, PDO::PARAM_STR);
-        return $result->execute();
+        $sql = 'INSERT INTO users (firstname,lastname,phone, email, gender,birthday, password) VALUES (?,?,?,?,?,?,?)';
+        $db = Db::run($sql,[$name,$surname,$phone,$email,$gender,$birthday,$password]);
+        return $db;
     }
 
     public static function checkName($name) {
@@ -42,7 +32,8 @@ class User
         return false;
     }
     
-    public static function checkPhone($string) {
+    public static function checkPhone($string) 
+    {
         $pattern = "/^\d{12}$/";
         if(preg_match($pattern, $string)) 
         {
@@ -51,30 +42,26 @@ class User
         return false;
     }
 
-    public static function checkEmailExists($email) {
+    public static function checkEmailExists($email) 
+    {
         
-        $db = Db::getConnection();
-        
-        $sql = 'SELECT COUNT(*) FROM users WHERE email = :email';
-        
-        $result = $db->prepare($sql);
-        $result->bindParam(':email', $email, PDO::PARAM_STR);
-        $result->execute();
+        $sql = 'SELECT COUNT(*) FROM users WHERE email = ?';
+        $db = Db::run($sql,[$email]);
+        $db->execute();
 
-        if($result->fetchColumn())
+        if($db->fetchColumn())
             return true;
         return false;
     }
     
     public static function checkUserData($email, $password)
     {
-        $db = Db::getConnection();
-        $sql = 'SELECT * FROM users WHERE email = :email';
-        $result = $db->prepare($sql);
-        $result->bindParam(':email', $email, PDO::PARAM_INT);
-        $result->execute();
+        
+        $sql = 'SELECT * FROM users WHERE email = ?';
+        $db = Db::run($sql,[$email]);
+        $db->execute();
 
-        $user = $result->fetch();
+        $user = $db->fetch();
         if ($user) {
             if(password_verify($password, $user['password']))
             {
@@ -86,11 +73,7 @@ class User
         return false;
     }
 
-    /**
-     * Запоминаем пользователя
-     * @param string $email
-     * @param string $password
-     */
+   
     public static function auth($userId)
     {
         $_SESSION['user'] = $userId;
@@ -98,7 +81,6 @@ class User
 
     public static function checkLogged()
     {
-        // Если сессия есть, вернем идентификатор пользователя
         if (isset($_SESSION['user'])) {
 
             return $_SESSION['user'];
@@ -128,47 +110,31 @@ class User
     public static function getUserById($id)
     {
         if ($id) {
-            $db = Db::getConnection();
-            $sql = 'SELECT * FROM users WHERE id = :id';
+            
+            $sql = 'SELECT * FROM users WHERE id = ?';
+            $db = Db::run($sql,[$id]);
 
-            $result = $db->prepare($sql);
-            $result->bindParam(':id', $id, PDO::PARAM_INT);
-
-            // Указываем, что хотим получить данные в виде массива
-            $result->setFetchMode(PDO::FETCH_ASSOC);
-            $result->execute();
+            $db->setFetchMode(PDO::FETCH_ASSOC);
+            $db->execute();
 
 
-            return $result->fetch();
+            return $db->fetch();
         }
     }
 
     public static function setSms($message,$nameUser,$email,$date) 
     {
-        
-        $db = Db::getConnection();
-        $sql = 'INSERT INTO inmessage (message,nameUser,email, date) '
-                . 'VALUES (:message, :nameUser, :email, :date)';
-        
-        $result = $db->prepare($sql);
-        $result->bindParam(':message', $message, PDO::PARAM_STR);
-        $result->bindParam(':nameUser', $nameUser, PDO::PARAM_STR);
-        $result->bindParam(':email', $email, PDO::PARAM_STR);
-        $result->bindParam(':date', $date, PDO::PARAM_STR);
+        $sql = 'INSERT INTO inmessage (message,nameUser,email, date) VALUES (?,?,?,?)';
+        $db = Db::run($sql,[$message,$nameUser,$email,$date]);
 
-        return $result->execute();
+        return $db->execute();
     }
 
     public static function getAllObjSms()
     {
-        $db = Db::getConnection();
-
         $sql = 'SELECT * FROM inmessage ';
-
-        $result = $db->prepare($sql);
-        $result->execute();
-
-        return $result->fetchAll();
+        $db = Db::run($sql);
+        return $db->fetchAll();
     }
 
 }
