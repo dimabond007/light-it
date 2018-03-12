@@ -42,8 +42,8 @@ class Router
                 $controllerName = array_shift($segments) . 'Controller';
                 $controllerName = ucfirst($controllerName);
 
-                $actionName = 'action' . ucfirst(array_shift($segments));
-                             
+                $actionName = 'action' .ucfirst(array_shift($segments));
+                    
                 $parameters = $segments;
                 
                 // Подключить файл класса-контроллера

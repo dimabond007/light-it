@@ -4,97 +4,88 @@
 class FeedbackController
 {
 
-    public function actionIndex()
-    {
-    	
+	public function actionIndex()
+	{
+		
 		$name='';
-    	$email='';
-    	if(!User::isGuest())
-    	{
-	        $id=$_SESSION['user'];
-			$user=User::getUserById($id);
-			$name = $user['firstName']; 
-			$email=$user['email'];
-		}
-		else
-		{
-			$name='';
-			$email='';
-		}
-        
-	    $errors = false;
-    	$msg='';
+		$errors = false;
+		$msg='';
 		if(isset($_POST['submit']))
 		{
-			$secret = "6LevmRMUAAAAAHcLOwdIHAT4UQVCASZ4PQTIz-70";
-			$response = null;
-			$reCaptcha = new ReCaptcha($secret);
-	        
-			if ($_POST["g-recaptcha-response"])
+
+
+			$name=$_POST['name'];
+			$parent_id=$_POST['parent_id'];
+			$msg=$_POST['msg'];
+
+			if($msg=='')
 			{
-				$response = $reCaptcha->verifyResponse($_SERVER["REMOTE_ADDR"],$_POST["g-recaptcha-response"]);
-			}
-
-
-			if ($response != null && $response->success) 
-			{
-				$name=$_POST['name'];
-				$email=$_POST['email'];
-				$msg=$_POST['msg'];
-
-				if($msg=='')
-				{
-					$errors[]="Поле сообшение не должно быть пустым";
-				}
-				else
-				{
-					if (!User::checkMsg($msg)) 
-					{
-	                    $errors[] = 'Сообшение не должно быть короче 12-х символов';
-	                }
-	            }
-				if($name=='')
-				{
-					$errors[]="Поле имя не должно быть пустым";
-				}
-				else
-				{
-					if (!User::checkName($name)) 
-					{
-	                    $errors[] = 'Имя не должно быть короче 3-х символов';
-	  				}
-	  			}
-				if($email=='')
-				{
-					$errors[]="Поле email не должно быть пустым";
-				}
-				else
-				{
-	                if (!User::checkEmail($email)) 
-	                {
-	                    $errors[] = 'Неправильный email';
-					}
-				}
-				if ($errors == false) {
-					date_default_timezone_set('Europe/Kiev');
-					$date=date('Y-m-d H:i:s');
-	                $res=User::setSms($msg,$name,$email,$date);
-	            }
+				$errors[]="Поле сообшение не должно быть пустым";
 			}
 			else
 			{
-				$errors[]='Капча не активирована';
+				if (!User::checkMsg($msg)) 
+				{
+					$errors[] = 'Сообшение не должно быть короче 12-х символов';
+				}
+			}
+			if($name=='')
+			{
+				$errors[]="Поле имя не должно быть пустым";
+			}
+			else
+			{
+				if (!User::checkName($name)) 
+				{
+					$errors[] = 'Имя не должно быть короче 3-х символов';
+				}
+			}
+			if ($errors == false) {
+				date_default_timezone_set('Europe/Kiev');
+				$date=date('Y-m-d H:i:s');
+				User::setSms($msg,$name,$parent_id);
 			}
 		} 
 
-		View::generate( '/views/feedback/feedback.php', ['name' => $name,'email'=>$email,'errors'=>$errors]);
-    }
+		View::generate( '/views/feedback/feedback.php', ['name' => $name,'errors'=>$errors]);
+	}
 
-    public function actionList()
-    {
-    	User::checkLogged();
-    	$listObjSql=User::getAllObjSms();
-    	View::generate( '/views/feedback/list.php', ['listObjSql' => $listObjSql]);
-    }
+	public function actionList()
+	{
+    	// User::checkLogged();
+		$listObjSql=User::getAllObjSms();
+		$sorted_list = $this->sort_r($listObjSql,0);
 
+		View::generate( '/views/feedback/list.php', ['listObjSql' =>$sorted_list]);
+	}
+
+
+	public static function showing_list($sorted_list){
+
+$sorted_list = array_reverse($sorted_list);
+		foreach ($sorted_list as $key =>$value ) {
+			
+			echo 
+			'<div class="dialog">
+			<h2 class="title">'.$value['name'].'</h2>
+			<div class="content">&nbsp'.$value['comment'].'</div>';
+			echo "<a href='/feedback/index/?parent_id=".$value['id']."'>Ответить</a>";
+			if($value['children'])
+				FeedbackController::showing_list($value['children']);
+			echo '</div>';
+
+		}
+
+	}
+
+	private function sort_r($input, $parentId) {
+		$output = array();
+		foreach ($input as $key => $item) {
+			if ($item['parent_id'] == $parentId) {
+				$item['children'] = $this->sort_r($input, $item['id']);
+				$output[] = $item;
+			}
+		}
+		return $output;
+	}
 }

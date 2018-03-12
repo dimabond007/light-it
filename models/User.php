@@ -122,17 +122,15 @@ class User
         }
     }
 
-    public static function setSms($message,$nameUser,$email,$date) 
+    public static function setSms($message,$nameUser,$parent_id) 
     {
-        $sql = 'INSERT INTO inmessage (message,nameUser,email, date) VALUES (?,?,?,?)';
-        $db = Db::run($sql,[$message,$nameUser,$email,$date]);
-
-        return $db->execute();
+        $sql = 'INSERT INTO comments (comment,name,parent_id) VALUES (?,?,?)';
+        $db = Db::run($sql,[$message,$nameUser,$parent_id]);
     }
 
     public static function getAllObjSms()
     {
-        $sql = 'SELECT * FROM inmessage ';
+        $sql = 'SELECT * FROM comments ';
         $db = Db::run($sql);
         return $db->fetchAll();
     }

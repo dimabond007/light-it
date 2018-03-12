@@ -6,7 +6,6 @@ return array(
     'user/register'=>'user/register',
     'user/logout'=>'user/logout',
     'feedback/index'=>'feedback/index',
-    'feedback/list'=>'feedback/list',
-    'site' => 'site/index', 
+    'feedback/list'=>'feedback/list'
     
 );

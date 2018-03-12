@@ -14,6 +14,7 @@ class UserController
         $gender1 = '';
         $birthday = '';
         $result = false;
+        $errors = false;
         
         if (isset($_POST['submit'])) {
             $name=$_POST['name'];
@@ -139,7 +140,7 @@ class UserController
             } 
             else {
                 User::auth($userId);
-                header("Location: /site/index");
+                header("Location: /feedback/index");
             }
 
         }
@@ -151,7 +152,6 @@ class UserController
 
     public function actionLogout()
     {
-        session_start();
         unset($_SESSION["user"]);
         header("Location: /user/login");
     }

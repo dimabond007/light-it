@@ -2,7 +2,7 @@
 
 return array(
     'host' => 'localhost',
-    'dbname' => 'srsc',
+    'dbname' => 'testtask',
     'user' => 'root',
     'password' => '',            
 );

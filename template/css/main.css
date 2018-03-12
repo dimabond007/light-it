@@ -9,10 +9,6 @@
 
 .dialog {
   margin-left: 110px;
-  margin-right: 60px;
-  background: #B0B0B0 ;
-  border: #C8C8C8    2px solid;
-  border-radius: 10px;
   padding: 4px;
   position: relative;
 }
@@ -23,9 +19,11 @@
 }
 
 .dialog .content {
-  border-radius: 7px;
-  border: 1px solid #C8C8C8;
-  padding: 10px 0 0 0;
+    border-radius: 7px;
+    border: 1px solid #C8C8C8;
+    padding: 10px 15px;
+    line-height: 1.7;
+    word-wrap: break-word;
 }
 
 body {
@@ -173,65 +171,6 @@ textarea {
   border-radius: 0;
 }
 
-
-table {
-  float: center;
-  margin: 0 auto;
-  border-collapse: separate;
-  border-spacing: 0;
-  text-shadow: 0 1px 0 #fff;
-  color: #2a2a2a;
-  background: white;
-
-}
-
-table td {
-  height: 50px;
-  line-height: 50px;
-  padding: 0 20px;
-  border-bottom: 1px solid #cdcdcd;
-  box-shadow: 0 1px 0 white;
-  white-space: nowrap;
-  text-align: center;
-}
-
-table tbody td {
-  text-align: center;
-  font: normal 12px Verdana, Arial, Helvetica;
-  width: 150px;
-}
-
-table tbody td:first-child {
-  width: auto;
-  text-align: left;
-}
-
-table td:nth-child(2),
-table td:nth-child(3) {
-  background: #efefef;
-  background: rgba(144,144,144,0.15);
-  border-right: 1px solid white;
-}
-
-
-table td:nth-child(4) {
-  background: #e7f3d4;
-  background: rgba(184,243,85,0.3);
-}
-
-table thead td {
-  font: bold 1.3em 'trebuchet MS', 'Lucida Sans', Arial;
-  border-radius-topright: 10px;
-  border-radius-topleft: 10px;
-  border-top-right-radius: 10px;
-  border-top-left-radius: 10px;
-  border-top: 1px solid #eaeaea;
-}
-
-table thead td:first-child {
-  border-top: none;
-}
-
-table th{
-  text-align: center;
+.parent_id_input{
+  display: none;
 }
